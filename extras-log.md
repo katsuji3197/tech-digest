@@ -7,3 +7,4 @@
 - 2026-10-22: 【号外】Zod 作者の新作「Reylo」――.sql ファイルを TypeScript に import すると型が付く（TS 7.1 content mappers、10月22日公開）
 - 2026-10-23: 【号外】佐川急便の不正アクセス、流出の可能性は最大約5323万件（第5報、10月23日発表）
 - 2026-10-25: 【号外】Node.js に Brotli 経由の RCE 脆弱性「Node2Shell」(CVE-2026-111497)――fetch() や Express 5 が入口に。Bun・Python・Envoy にも波及
+- 2026-10-27: 【号外】Anthropic が Nasdaq 上場を正式申請（ティッカー ANT）／OpenAI は半額の新モデル GPT-6.1 Terra を公開
