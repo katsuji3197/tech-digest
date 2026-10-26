@@ -1,0 +1,6 @@
+node_modules/
+dist/
+deploy/
+backup-*/
+*.bak-*
+.DS_Store
