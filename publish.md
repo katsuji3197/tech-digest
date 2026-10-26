@@ -175,3 +175,9 @@ arguments: {
 - 画像は `public/images/YYYY-MM-DD-extra-<slug>/` に置き、`scripts/yt-thumb.sh YYYY-MM-DD-extra-<slug> <URL>` を使う。
 - 同じ日に複数の号外を出すときは、ハブの frontmatter に `time: HH:MM`（JST）を入れる。同日の号は time の新しい順に並ぶ（time なしは最後）。
 - 手順2〜5は週刊とまったく同じ。トップでは赤い「号外」バッジ付きで日付の新しい順に並び、「号外」タブで絞り込める。
+
+## ソース管理（GitHub）
+- ソースは https://github.com/katsuji3197/tech-digest （public, main）で管理する。
+- 除外: node_modules/, dist/, deploy/, backup-*/（`.gitignore` 参照。ビルドで再生成できる）。
+- 公開（Vercel デプロイ）は従来どおり Vercel MCP で行う。GitHub との自動連携はしていない。
+- 記事追加・修正のたびに commit & push する（トークンは環境変数 TECH_DIGEST_GH_TOKEN、リモートURLには埋め込まない）。
