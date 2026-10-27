@@ -11,3 +11,4 @@ dpl_AC42dXhda413eo2qeaZ6t1T9i58x 2026-10-25-extra-node-brotli-rce 2026-10-25 08:
 dpl_2bX1qndWrELymvQztmaePsAEnQgF 2026-10-26-analytics 2026-10-26 12:35:11 JST
 dpl_EGgVFwvbam6kSiPYUycvfy9YUk3T 2026-10-26-analytics-redeploy 2026-10-26 12:40:42 JST
 dpl_8bLpf3W16HrsMk4Fo1tARmEZCvU3 2026-10-27-extra-anthropic-ipo 2026-10-27 08:19:30 JST
+dpl_8GUMYx1QQtHyMSSsuj9hcFMfEASJ 2026-10-27-extra-openai-eth 2026-10-27 18:15:51 JST
