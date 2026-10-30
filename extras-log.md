@@ -11,3 +11,5 @@
 - 2026-10-27: 【号外】OpenAI の AI が「指数時間仮説（ETH）は偽」と主張――カケヤ予想の全次元解決も、専門家が検証へ
 - 2026-10-29: 【号外】Apple 初のタッチ対応 Mac、PROLED XDR 搭載 MacBook Pro が登場――「ホバー前提の UI」は Mac でも通用しなくなる
 - 2026-10-29: 【号外】Google が Gemini 4 Carbon を発表――AA Intelligence Index で首位、サイバー防御で最高水準。ただし開発者向け API はまだ
+- 2026-10-30: 【号外】Cursor のマーケットプレイスに偽の Claude Code 拡張 2.1.313――SSH バックドアを仕込み、最大5,000人に影響
+- 2026-10-30: 【号外】Linux カーネルの TCP 脆弱性 CVE-2026-98432、AI が遠隔 root の攻撃コードを実証――Ubuntu と RHEL はまだ修正版待ち
