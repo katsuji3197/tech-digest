@@ -13,3 +13,4 @@
 - 2026-10-29: 【号外】Google が Gemini 4 Carbon を発表――AA Intelligence Index で首位、サイバー防御で最高水準。ただし開発者向け API はまだ
 - 2026-10-30: 【号外】Cursor のマーケットプレイスに偽の Claude Code 拡張 2.1.313――SSH バックドアを仕込み、最大5,000人に影響
 - 2026-10-30: 【号外】Linux カーネルの TCP 脆弱性 CVE-2026-98432、AI が遠隔 root の攻撃コードを実証――Ubuntu と RHEL はまだ修正版待ち
+- 2026-10-31: 【号外】Vercel Labs が「agent-desktop」を公開――AI エージェントがアクセシビリティツリー経由でデスクトップアプリを操作
