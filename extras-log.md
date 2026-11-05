@@ -15,3 +15,4 @@
 - 2026-10-30: 【号外】Linux カーネルの TCP 脆弱性 CVE-2026-98432、AI が遠隔 root の攻撃コードを実証――Ubuntu と RHEL はまだ修正版待ち
 - 2026-10-31: 【号外】Vercel Labs が「agent-desktop」を公開――AI エージェントがアクセシビリティツリー経由でデスクトップアプリを操作
 - 2026-11-01: 【号外】DeepSeek が常駐型コーディングエージェント「dsh-superagent」を公開――GitHub の依頼をチケット化し、並列のワーカーが PR で返す
+- 2026-11-06: 【号外】OpenAI がサイバー特化モデル「GPT-6 Cyber」を発表――Linux 948件・Firefox 81件の脆弱性を実証
