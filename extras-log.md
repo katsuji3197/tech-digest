@@ -16,3 +16,4 @@
 - 2026-10-31: 【号外】Vercel Labs が「agent-desktop」を公開――AI エージェントがアクセシビリティツリー経由でデスクトップアプリを操作
 - 2026-11-01: 【号外】DeepSeek が常駐型コーディングエージェント「dsh-superagent」を公開――GitHub の依頼をチケット化し、並列のワーカーが PR で返す
 - 2026-11-06: 【号外】OpenAI がサイバー特化モデル「GPT-6 Cyber」を発表――Linux 948件・Firefox 81件の脆弱性を実証
+- 2026-11-06: 【号外】Discord が Electron と React Native を捨て、クライアント全体を Rust＋GPUI で作り直す（CTO が11月5日JSTに宣言、Discord Phoenix 初期ビルド約290MB）
