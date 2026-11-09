@@ -19,3 +19,5 @@
 - 2026-11-06: 【号外】Discord が Electron と React Native を捨て、クライアント全体を Rust＋GPUI で作り直す（CTO が11月5日JSTに宣言、Discord Phoenix 初期ビルド約290MB）
 - 2026-11-08: 【号外】OpenCode Browse――AIエージェントが「いまのブラウザ」を操作する MCP＋拡張
 - 2026-11-09: 【号外】ニトリに不正アクセス、最大3762万件の会員・購入者情報が流出の可能性（11月9日17時20分JST公表）
+- 2026-11-10: 【号外】Anthropic が Claude Fable 5.2 / Mythos 5.2 を公開――最上位モデルが2割値下げ、FrontierCode で公開モデル最高
+- 2026-11-10: 【号外】Expo が Rust 製の新フレームワーク「Exact」をプレビュー――UI は新言語 Contract で書き、Web・iOS・macOS・Linux でネイティブ動作
