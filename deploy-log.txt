@@ -21,3 +21,4 @@ dpl_JD65nougW5vYeXMhgDbUcaruUcXn 2026-11-06-extra-gpt6-cyber 2026-11-06 08:14:41
 dpl_4uAgPVRXQru3TneCwZJzZyegWagh 2026-11-06-extra-discord-rust 2026-11-06 18:17:01 JST
 dpl_DkWzJuyWgcF7CcVTyiZJBZBdakMn 2026-11-07 2026-11-07 09:19:13 JST
 dpl_7EVz5c3AHkUJtQ6KC3gM2ZWiQfVJ 2026-11-08-extra-opencode-browse 2026-11-08 08:16:25 JST
+dpl_GHMVfvuJWimoqB7ygTt7jd7BW3yG 2026-11-09-extra-nitori-leak 2026-11-09 18:17:18 JST
