@@ -22,3 +22,4 @@
 - 2026-11-10: 【号外】Anthropic が Claude Fable 5.2 / Mythos 5.2 を公開――最上位モデルが2割値下げ、FrontierCode で公開モデル最高
 - 2026-11-10: 【号外】Expo が Rust 製の新フレームワーク「Exact」をプレビュー――UI は新言語 Contract で書き、Web・iOS・macOS・Linux でネイティブ動作
 - 2026-11-12: 【号外】AWS 公式のローカルエミュレーター「AWS Emulator」登場――コードは全行 AI エージェント製、CC0 で無料公開
+- 2026-11-12: 【号外】Apache HTTP Server に認証不要の RCE「CVE-2026-119618」――HTTP/2 有効なら 2.4.71 へ即更新
