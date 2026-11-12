@@ -24,3 +24,4 @@ dpl_7EVz5c3AHkUJtQ6KC3gM2ZWiQfVJ 2026-11-08-extra-opencode-browse 2026-11-08 08:
 dpl_GHMVfvuJWimoqB7ygTt7jd7BW3yG 2026-11-09-extra-nitori-leak 2026-11-09 18:17:18 JST
 dpl_CCZHvfhWudnudYyt4Ejjrk95kJxC 2026-11-10-extra-claude-fable-5-2+expo-exact 2026-11-10 08:24:29 JST
 dpl_DKax96K2KjZVZvEpDoHy6pyofkJ6 2026-11-12-extra-aws-emulator 2026-11-12 08:20:38 JST
+dpl_2gHSfbXa1mLtQbpXW2SphTK437W9 2026-11-12-extra-apache-http2-rce 2026-11-12 18:18:26 JST
