@@ -23,3 +23,4 @@
 - 2026-11-10: 【号外】Expo が Rust 製の新フレームワーク「Exact」をプレビュー――UI は新言語 Contract で書き、Web・iOS・macOS・Linux でネイティブ動作
 - 2026-11-12: 【号外】AWS 公式のローカルエミュレーター「AWS Emulator」登場――コードは全行 AI エージェント製、CC0 で無料公開
 - 2026-11-12: 【号外】Apache HTTP Server に認証不要の RCE「CVE-2026-119618」――HTTP/2 有効なら 2.4.71 へ即更新
+- 2026-11-13: 【号外】Microsoft 365 で世界規模の障害――Outlook・Teams・Copilot などに影響、13日朝も復旧途上（EX1550543 / MO1550821）
