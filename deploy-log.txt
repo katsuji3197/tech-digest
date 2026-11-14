@@ -27,3 +27,4 @@ dpl_DKax96K2KjZVZvEpDoHy6pyofkJ6 2026-11-12-extra-aws-emulator 2026-11-12 08:20:
 dpl_2gHSfbXa1mLtQbpXW2SphTK437W9 2026-11-12-extra-apache-http2-rce 2026-11-12 18:18:26 JST
 dpl_HuodT6pjn9UNmc1uGBZDtv36SwQz 2026-11-13-extra-ms365-outage 2026-11-13 08:22:31 JST
 dpl_AxfZrxqZhSUPsYX27VDFeuAv33t2 2026-11-13-extra-nvidia-ceo 2026-11-13 18:14:09 JST
+dpl_AQ3jLBvDE8GF1uuv5whA733EC1dm 2026-11-14 2026-11-14 09:23:48 JST
