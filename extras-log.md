@@ -26,3 +26,5 @@
 - 2026-11-13: 【号外】Microsoft 365 で世界規模の障害――Outlook・Teams・Copilot などに影響、13日朝も復旧途上（EX1550543 / MO1550821）
 - 2026-11-13: 【号外】NVIDIA のジェンスン・フアン CEO が辞任――創業33年で初のトップ交代、暫定 CEO は CFO のコレット・クレス氏
 - 2026-11-17: 【号外】Optimizely の配信スクリプトにマルウェア混入――Zoom・BBC・CNN など178組織の訪問者に配信（OPTIMJACK、11月16日UTC）
+- 2026-11-18: 【号外】OpenAI が GPT-6.2 Astra／Sol を公開――Astra は API 2割値下げ、フロントエンドと 3D に強いとうたうも、先行テスターの評価は割れる
+- 2026-11-18: 【号外】Java に認証不要の RCE「Java4Shell」（CVE-2026-114938）――Base64 を処理するだけで突破、Keycloak・Jira・Jenkins で実証

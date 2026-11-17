@@ -29,3 +29,4 @@ dpl_HuodT6pjn9UNmc1uGBZDtv36SwQz 2026-11-13-extra-ms365-outage 2026-11-13 08:22:
 dpl_AxfZrxqZhSUPsYX27VDFeuAv33t2 2026-11-13-extra-nvidia-ceo 2026-11-13 18:14:09 JST
 dpl_AQ3jLBvDE8GF1uuv5whA733EC1dm 2026-11-14 2026-11-14 09:23:48 JST
 dpl_CgrV9Vf1KkrLiYWPFw3qAmuLR1K5 2026-11-17-extra-optimizely-supply-chain 2026-11-17 08:23:14 JST
+dpl_4iNAw1AFm9HsgLXVeCTfCXNp41ED 2026-11-18-extra-gpt-6-2+java4shell 2026-11-18 08:26:48 JST
