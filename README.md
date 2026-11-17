@@ -11,7 +11,7 @@
 
 ```
 /workspace/tech-digest/
-├── build.sh                 # ビルド（依存は marked のみ。node_modules が無ければ自動で install）
+├── build.sh                 # ビルド（marked + sharp。node_modules が無ければ自動で install）
 ├── publish.md               # 公開手順（エージェント向け）← 公開時はこれに従う
 ├── README.md
 ├── templates/               # index.md（号のハブ）/ article.md（記事）の雛形
@@ -38,7 +38,7 @@
 ## 使い方（概要）
 
 1. `posts/<issue>/` にハブと記事、`public/images/<issue>/` に画像を置く
-2. `./build.sh`
+2. `./build.sh`（または `npm run build`）。png/jpg は WebP も生成し、HTML の `<img>` に width/height を付ける。`og:image` は元形式のまま。
 3. Vercel MCP で `upload_file`（`deploy/uploads.json` の全件）→ `create_deployment`（`files` = `deploy/manifest.json`）
 4. `deploy/urls.txt` の全 URL が `https://tech-digest-psi.vercel.app` で 200 を返すことを確認する
 
