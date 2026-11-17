@@ -141,3 +141,6 @@ a.yt:hover::after,a.yt:focus-visible::after{background:#ff0000}
   .meta .sep{display:none}
   .meta>:has(+.sep){margin-right:12px}
 }
+
+/* <picture> はボックスを作らず、既存の img / .thumb レイアウトを維持する */
+picture{display:contents}

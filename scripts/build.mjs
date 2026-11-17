@@ -13,6 +13,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { Marked } from 'marked';
+import sharp from 'sharp';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const POSTS = path.join(ROOT, 'posts');
@@ -73,14 +74,14 @@ function makeMarked(issue) {
         return `<h${depth}${aux ? ' class="aux"' : ''}>${inner}</h${depth}>\n`;
       },
       image({ href, title, text }) {
-        return `<img src="${esc(href)}" alt="${esc(text)}" loading="lazy" decoding="async">`;
+        return imgTag({ src: href, alt: text, lazy: true, decoding: 'async' });
       },
       paragraph({ tokens, text }) {
         const bare = text.trim();
         // 1) bare YouTube URL paragraph -> thumbnail card (if thumbnail downloaded)
         const id = /^https?:\/\/\S+$/.test(bare) ? ytId(bare) : null;
         if (id && fs.existsSync(path.join(PUBLIC, 'images', issue, `yt-${id}.jpg`))) {
-          return `<figure class="video"><a class="yt" href="${esc(bare)}" target="_blank" rel="noopener noreferrer"><img src="/images/${issue}/yt-${id}.jpg" alt="YouTube 動画サムネイル" loading="lazy"></a><figcaption>YouTube で再生</figcaption></figure>\n`;
+          return `<figure class="video"><a class="yt" href="${esc(bare)}" target="_blank" rel="noopener noreferrer">${imgTag({ src: `/images/${issue}/yt-${id}.jpg`, alt: 'YouTube 動画サムネイル', lazy: true })}</a><figcaption>YouTube で再生</figcaption></figure>\n`;
         }
         // 2) paragraph with a single image (optionally linked) -> <figure> with caption from image title
         if (tokens.length === 1 && (tokens[0].type === 'image' || (tokens[0].type === 'link' && tokens[0].tokens?.length === 1 && tokens[0].tokens[0].type === 'image'))) {
@@ -162,15 +163,87 @@ function writePage(rel, html) {
   fs.writeFileSync(out, html);
 }
 function checkImages(html, where) {
-  for (const [, src] of html.matchAll(/<img src="(\/[^"]+)"/g)) {
+  for (const [, src] of html.matchAll(/<(?:img\s[^>]*\bsrc|source\s[^>]*\bsrcset)="(\/[^"]+)"/g)) {
     if (!fs.existsSync(path.join(DIST, decodeURI(src)))) warn(`画像が見つかりません: ${src} (${where})`);
   }
 }
 
+// public/images の png/jpg を dist に WebP でも出力し、寸法を記録する。
+// HTML は <picture> で WebP を優先し、img src は元形式のまま（og:image も元形式）。
+const imageMeta = new Map(); // '/images/...' -> { width, height, webp }
+const WEBP_QUALITY = 80;
+
+function fmtBytes(n) {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function imgTag({ src, alt = '', className, lazy = false, decoding = 'async' }) {
+  const meta = imageMeta.get(src);
+  const attrs = [];
+  if (className) attrs.push(`class="${esc(className)}"`);
+  attrs.push(`src="${esc(src)}"`, `alt="${esc(alt)}"`);
+  if (meta?.width && meta?.height) attrs.push(`width="${meta.width}"`, `height="${meta.height}"`);
+  if (lazy) attrs.push('loading="lazy"');
+  if (decoding) attrs.push(`decoding="${decoding}"`);
+  const img = `<img ${attrs.join(' ')}>`;
+  if (meta?.webp) return `<picture><source type="image/webp" srcset="${esc(meta.webp)}">${img}</picture>`;
+  return img;
+}
+
+async function convertImages() {
+  const dir = path.join(DIST, 'images');
+  if (!fs.existsSync(dir)) return;
+  let srcBytes = 0, webpBytes = 0, converted = 0, skipped = 0, larger = 0;
+  const files = walk(dir).filter((rel) => /\.(png|jpe?g|webp)$/i.test(rel));
+  for (const rel of files) {
+    const full = path.join(dir, rel);
+    const webPath = '/images/' + rel;
+    const ext = path.extname(rel).toLowerCase();
+    try {
+      const meta = await sharp(full).metadata();
+      if (!meta.width || !meta.height) { warn(`画像の寸法が取れません: ${webPath}`); continue; }
+      const entry = { width: meta.width, height: meta.height, webp: null };
+      if (ext === '.webp') { imageMeta.set(webPath, entry); skipped++; continue; }
+      const webpRel = rel.replace(/\.(png|jpe?g)$/i, '.webp');
+      const webpFull = path.join(dir, webpRel);
+      const webpPath = '/images/' + webpRel;
+      if (fs.existsSync(path.join(PUBLIC, 'images', webpRel))) {
+        warn(`WebP 出力先が元画像と衝突するためスキップ: ${webpPath}`);
+        imageMeta.set(webPath, entry);
+        skipped++;
+        continue;
+      }
+      await sharp(full).webp({ quality: WEBP_QUALITY }).toFile(webpFull);
+      const origSize = fs.statSync(full).size;
+      const newSize = fs.statSync(webpFull).size;
+      if (newSize >= origSize) {
+        fs.unlinkSync(webpFull);
+        imageMeta.set(webPath, entry);
+        larger++;
+        continue;
+      }
+      entry.webp = webpPath;
+      imageMeta.set(webPath, entry);
+      srcBytes += origSize;
+      webpBytes += newSize;
+      converted++;
+    } catch (err) {
+      warn(`画像の変換に失敗: ${webPath} (${err.message})`);
+    }
+  }
+  const saved = srcBytes - webpBytes;
+  const pct = srcBytes ? ((saved / srcBytes) * 100).toFixed(1) : '0.0';
+  console.log(`✔ images: WebP ${converted}枚 ${fmtBytes(srcBytes)} → ${fmtBytes(webpBytes)}（${pct}% 削減、${fmtBytes(saved)}）。寸法のみ ${skipped}、WebP の方が大きいため未採用 ${larger}`);
+}
+
+async function main() {
 // ---- load ----
 rmrf(DIST); fs.mkdirSync(DIST, { recursive: true });
 copyDir(PUBLIC, DIST);
 copyDir(ASSETS, DIST);
+await convertImages();
 
 const ISSUE_RE = /^(\d{4}-\d{2}-\d{2})(?:-extra-([a-z0-9-]+))?$/;
 const SLUG_RE = /^[a-z0-9][a-z0-9-]*$/;
@@ -210,7 +283,7 @@ issues.sort((a, b) => (a.date === b.date ? (String(b.time || '').localeCompare(S
 for (const is of issues) {
   is.articles.forEach((a, i) => {
     const prev = is.articles[i - 1], next = is.articles[i + 1];
-    const hero = `<figure class="hero"><img src="${esc(a.cover)}" alt="" decoding="async">${a.cover_caption ? `<figcaption>${makeMarked(is.issue).parseInline(a.cover_caption)}</figcaption>` : ''}</figure>`;
+    const hero = `<figure class="hero">${imgTag({ src: a.cover, alt: '', decoding: 'async' })}${a.cover_caption ? `<figcaption>${makeMarked(is.issue).parseInline(a.cover_caption)}</figcaption>` : ''}</figure>`;
     const others = is.articles.map((o, j) => `<li${o === a ? ' aria-current="page"' : ''}><span class="num">${j + 1}</span>${o === a ? `<span>${esc(o.title)}</span>` : `<a href="/posts/${is.issue}/${o.slug}/">${esc(o.title)}</a>`}</li>`).join('\n');
     const body = `<nav class="crumbs" aria-label="パンくずリスト"><ol><li><a href="/">トップ</a></li><li class="crumb-issue" title="${esc(is.title)}"><a href="/posts/${is.issue}/">${esc(is.title)}</a></li><li aria-current="page">No.${i + 1}</li></ol></nav>
 <article class="article ${is.type}">
@@ -242,7 +315,7 @@ ${a.html}
 // ---- issue hub pages ----
 const articleCard = (is, a, i) => `<li class="acard">
   <a href="/posts/${is.issue}/${a.slug}/">
-    <img class="thumb" src="${esc(a.cover)}" alt="" loading="lazy">
+    ${imgTag({ src: a.cover, alt: '', className: 'thumb', lazy: i > 0 })}
     <div class="acard-body">
       <div class="meta"><span class="num">No.${i + 1}</span><time datetime="${esc(a.date)}">${fmtDate(a.date)}</time></div>
       <h3>${esc(a.title)}</h3>
@@ -268,7 +341,7 @@ ${is.articles.map((a, i) => articleCard(is, a, i)).join('\n')}
 // ---- top page ----
 const cards = issues.map((is, idx) => `<li class="card" data-type="${is.type}">
   <a class="card-main" href="/posts/${is.issue}/">
-    ${is.cover ? `<img class="thumb" src="${esc(is.cover)}" alt="" loading="lazy">` : '<div class="thumb ph"></div>'}
+    ${is.cover ? imgTag({ src: is.cover, alt: '', className: 'thumb', lazy: idx > 0 }) : '<div class="thumb ph"></div>'}
     <div class="card-body">
       <div class="meta">${badge(is.type)}<time datetime="${esc(is.date)}">${fmtDate(is.date)}</time><span class="sep">·</span><span>${is.articles.length}本</span>${idx === 0 ? '<span class="latest">最新号</span>' : ''}</div>
       <h2>${esc(is.title)}</h2>
@@ -316,3 +389,9 @@ for (const is of issues) {
 }
 console.log(`✔ ${issues.length} issue(s), ${issues.reduce((n, i) => n + i.articles.length, 0)} article(s), ${files.length} files (${uniq.length} unique) -> dist/ ; deploy/manifest.json, deploy/urls.txt`);
 if (warnings.length) console.log(`⚠ warnings: ${warnings.length}`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
