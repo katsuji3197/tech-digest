@@ -2,11 +2,12 @@
 
 サイト: **https://tech-digest-psi.vercel.app**（公開・ログイン不要）
 作業場所: 共有ボックスの `/workspace/tech-digest/`
-デプロイ: Vercel CLI は使わない。**Vercel MCP（namespace `user-Vercel`）の `upload_file` → `create_deployment`** で行う。トークンや CLI ログインは不要で、使ってもいけない。
+デプロイ: GitHub（https://github.com/katsuji3197/tech-digest）の **main に push すると、Vercel が本番へ自動デプロイする**。通常の公開では Vercel CLI や Vercel MCP の `upload_file` / `create_deployment` は使わない。
 
-- Vercel プロジェクト: `tech-digest`（id `prj_g5oNakmlMlC0dCz6KXnkIsUPQTSO`）
-- **`teamId` は渡さない。** デフォルトスコープ（team_iAxWmUeyQkwcOX6KRWxcWNya / katsujis-projects）が使われる。`teamId` を明示すると 403 になる。
+- Vercel プロジェクト: `tech-digest`（id `prj_g5oNakmlMlC0dCz6KXnkIsUPQTSO`）、チーム katsujis-projects
+- プロジェクト設定: `buildCommand` は `npm run build`、`outputDirectory` は `dist`、framework はなし
 - 別名 `tech-digest-katsujis-projects.vercel.app` とデプロイ固有 URL は Vercel Authentication で保護されている（302）。保護設定は変更しないこと。
+- 障害時に Vercel MCP で alias を戻す場合も **`teamId` は渡さない**（明示すると 403 になる）。
 - **Web Analytics（閲覧数計測）**: 公式スニペット（`window.va` ＋ `/_vercel/insights/script.js`）は `scripts/build.mjs` の `layout()` 内 `</head>` 直前にある。**消さずに残すこと**。計測を有効にするには Vercel ダッシュボード（プロジェクト `tech-digest` → Analytics タブ → Enable）で有効化が必要。
 
 ---
@@ -104,10 +105,12 @@ PY
 ## 2. ビルド
 
 ```bash
-cd /workspace/tech-digest && ./build.sh
+cd /workspace/tech-digest && npm run build
 ```
 
-- 出力されるもの: `dist/`（静的サイト一式）、`deploy/manifest.json`（create_deployment の `files` 配列）、`deploy/uploads.json`（アップロード対象）、`deploy/b64/<sha>.b64`、`deploy/urls.txt`（検証用の URL 一覧）。
+（`./build.sh` でも同じ。node_modules が無ければ `build.sh` が `npm install` する）
+
+- 出力されるもの: `dist/`（静的サイト一式。Vercel の `outputDirectory`）、`deploy/urls.txt`（検証用の URL 一覧）。`deploy/manifest.json` なども生成されるが、通常の公開では使わない。
 - ログには記事ごとの字数が出る。`⚠ 画像が見つかりません` や `⚠ 本文が短め` が出たら直してから再ビルドする。
 - ローカル確認（任意）:
   ```bash
@@ -116,55 +119,45 @@ cd /workspace/tech-digest && ./build.sh
   ```
   撮ったスクリーンショットを Read で確認する。
 
-## 3. アップロード（user-Vercel `upload_file`）
+## 3. コミットして main に push
 
-`deploy/uploads.json` の**全エントリ**について1回ずつ呼ぶ（並列で可）。
+変更をコミットし、`origin/main` に push する。Vercel が本番へ自動デプロイする。
 
-```json
-CallDynamicTool namespace=user-Vercel toolName=upload_file
-arguments: {
-  "contentLength": <size>,
-  "xVercelDigest": "<sha>",
-  "requestBody": "$file:/workspace/tech-digest/deploy/b64/<sha>.b64"
-}
+- トークンは環境変数 `TECH_DIGEST_GH_TOKEN` を使う。
+- リモート URL やリポジトリにトークンを埋め込まない（値をファイルやコミットに書かない）。
+- 使うのは git の `http.extraheader` 経由だけ。トークンの値は表示しない。
+
+```bash
+cd /workspace/tech-digest
+git add <変更したファイル>
+git status   # 秘密情報や dist/・deploy/ が入っていないことを確認
+git commit -m "<変更内容の要約>"
+# Git HTTPS では Basic（x-access-token:<トークン> の base64）を http.extraheader で渡す。
+# トークンの値も base64 も表示しない。リモート URL には埋め込まない。
+HEADER="AUTHORIZATION: basic $(python3 -c 'import os,base64; print(base64.b64encode(b"x-access-token:"+os.environ["TECH_DIGEST_GH_TOKEN"].strip().encode()).decode())')"
+git -c http.extraheader="$HEADER" push origin main
 ```
 
-- `teamId` は付けない。
-- `requestBody` には `"$file:<絶対パス>"` という文字列だけを渡す。これで b64 ファイルの中身が送信される。base64 を会話に貼らないこと。
-- 一覧の出し方: `python3 -c "import json;[print(f['sha'],f['size'],f['b64']) for f in json.load(open('deploy/uploads.json'))]"`
-- 既にアップロード済みのファイルを再送しても問題はない。
+## 4. デプロイの完了を待つ
 
-## 4. 本番デプロイ（user-Vercel `create_deployment`）
+1. push 後、Vercel が本番デプロイを始める。Vercel MCP の `list_deployments` や `get_deployment`（`idOrUrl` に `dpl_...`）で状態を見る。
+2. `readyState` が `READY` になるまで待つ。`ERROR` なら `list_deployment_events` でログを確認し、原因を直してから再度 main に push する。
+3. 返ってきた `dpl_...` を `deploy-log.txt` に追記する（例: `echo "dpl_xxx $ISSUE $(date '+%F %T JST')" >> deploy-log.txt`）。このファイルもコミット対象にしてよい。
 
-```json
-CallDynamicTool namespace=user-Vercel toolName=create_deployment
-arguments: {
-  "skipAutoDetectionConfirmation": "1",
-  "requestBody": {
-    "name": "tech-digest",
-    "project": "tech-digest",
-    "target": "production",
-    "projectSettings": { "framework": null, "buildCommand": "", "installCommand": "", "outputDirectory": "." },
-    "files": <deploy/manifest.json の配列をそのまま貼る>
-  }
-}
+## 5. 検証
+
+公開 URL の記事・ハブ・トップ、画像（WebP と元画像）、`deploy/urls.txt` の全 URL が 200 を返すか確認する。
+
+```bash
+B=https://tech-digest-psi.vercel.app
+while read p; do printf '%s %s\n' "$(curl -s -o /dev/null -w '%{http_code}' "$B$p")" "$p"; done < deploy/urls.txt | sort | uniq -c -w3
+while read p; do c=$(curl -s -o /dev/null -w '%{http_code}' "$B$p"); [ "$c" = 200 ] || echo "NG $c $p"; done < deploy/urls.txt
+curl -s $B/ | grep -o '<h2>[^<]*'          # 先頭に新しい号があること
 ```
 
-- `missing_files` エラーが返ったら、列挙された sha を手順3で再アップロードしてから再実行する。
-- 返ってきた `dpl_...` を `deploy-log.txt` に追記する（例: `echo "dpl_xxx $ISSUE $(date '+%F %T JST')" >> deploy-log.txt`）。
+401 や 302 が返る場合（保護設定が変わった等）は、MCP の `web_fetch_vercel_url` で確認し、その旨を報告する。
 
-## 5. 待機と検証
-
-1. `get_deployment`（`idOrUrl` に `dpl_...`）を数秒おきに呼び、`readyState` が `READY` になるまで待つ。`ERROR` なら `list_deployment_events` でログを確認する。
-2. 公開 URL の全ページと全画像が 200 を返すか確認する。
-   ```bash
-   B=https://tech-digest-psi.vercel.app
-   while read p; do printf '%s %s\n' "$(curl -s -o /dev/null -w '%{http_code}' "$B$p")" "$p"; done < deploy/urls.txt | sort | uniq -c -w3
-   while read p; do c=$(curl -s -o /dev/null -w '%{http_code}' "$B$p"); [ "$c" = 200 ] || echo "NG $c $p"; done < deploy/urls.txt
-   curl -s $B/ | grep -o '<h2>[^<]*'          # 先頭に新しい号があること
-   ```
-   401 や 302 が返る場合（保護設定が変わった等）は、MCP の `web_fetch_vercel_url` で確認し、その旨を報告する。
-3. 報告に含めるもの: ハブ URL、各記事 URL、トピック一覧、デプロイ ID、問題点。
+報告に含めるもの: ハブ URL、各記事 URL、トピック一覧、デプロイ ID、問題点。
 
 ---
 
@@ -177,7 +170,12 @@ arguments: {
 - 手順2〜5は週刊とまったく同じ。トップでは赤い「号外」バッジ付きで日付の新しい順に並び、「号外」タブで絞り込める。
 
 ## ソース管理（GitHub）
+
 - ソースは https://github.com/katsuji3197/tech-digest （public, main）で管理する。
+- GitHub と Vercel は連携済み。**main への push で本番（https://tech-digest-psi.vercel.app）へ自動デプロイされる**。
 - 除外: node_modules/, dist/, deploy/, backup-*/（`.gitignore` 参照。ビルドで再生成できる）。
-- 公開（Vercel デプロイ）は従来どおり Vercel MCP で行う。GitHub との自動連携はしていない。
-- 記事追加・修正のたびに commit & push する（トークンは環境変数 TECH_DIGEST_GH_TOKEN、リモートURLには埋め込まない）。
+- 記事追加・修正のたびに commit & push する（トークンは環境変数 `TECH_DIGEST_GH_TOKEN`。リモート URL やリポジトリには埋め込まない。使うのは `http.extraheader` 経由だけ）。
+
+## 障害時（本番が壊れたとき）
+
+通常の公開では手動デプロイしない。本番が壊れた場合は、直前の READY デプロイに本番 alias（`tech-digest-psi.vercel.app`）を戻す。Vercel MCP の `assign_alias` を使う（`teamId` は付けない）。復旧後に原因を直し、main へ push して再デプロイする。
