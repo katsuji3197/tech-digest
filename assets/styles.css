@@ -144,3 +144,58 @@ a.yt:hover::after,a.yt:focus-visible::after{background:#ff0000}
 
 /* <picture> はボックスを作らず、既存の img / .thumb レイアウトを維持する */
 picture{display:contents}
+
+/* calendar (top) */
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.cal{margin:22px 0 0;padding:16px 14px 14px;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);max-width:460px}
+.cal button{font:inherit;color:inherit;letter-spacing:inherit;cursor:pointer}
+.cal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cal-top h2{font-size:16px;margin:0;line-height:1.4}
+.seg{display:inline-flex;border:1px solid var(--faint);border-radius:999px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:6px 14px;font-size:13.5px;color:var(--muted);min-height:36px}
+.seg button+button{border-left:1px solid var(--faint)}
+.seg button[aria-pressed=true]{background:var(--fg);color:var(--bg)}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin:10px 0 4px}
+.cal-month{margin:0;font-weight:700;font-size:16px}
+.cal-month::after{content:attr(data-total);margin-left:8px;font-size:12.5px;font-weight:400;color:var(--muted)}
+.cal-step{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:transparent;font-size:22px;line-height:1}
+.cal-step:hover:not(:disabled){border-color:var(--fg)}
+.cal-step:disabled{opacity:.35;cursor:default}
+.cal-grid{width:100%;border-collapse:separate;border-spacing:0 3px;table-layout:fixed}
+.cal-grid th{font-size:12px;font-weight:400;color:var(--muted);padding:2px 0}
+.cal-grid abbr{text-decoration:none}
+.cal-grid th.sun{color:var(--extra)}
+.cal-grid th.sat{color:var(--weekly)}
+.cal-grid td{padding:0;text-align:center}
+.cal-grid .day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:100%;min-height:48px;padding:3px 0;border:1px solid transparent;border-radius:10px;background:transparent;line-height:1.2}
+.cal-grid .dn{font-size:14.5px;font-weight:700}
+.cal-grid .cnt{font-size:11px;font-weight:700;line-height:1;padding:3px 5px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--fg);white-space:nowrap}
+.cal-grid .day.zero .dn{font-weight:400;color:var(--faint)}
+.cal-grid .day:hover{border-color:var(--faint)}
+.cal-grid .day.today{border-color:var(--accent)}
+.cal-grid .day.in{background:color-mix(in srgb,var(--accent) 14%,transparent);border-radius:0}
+.cal-grid .day.in.start{border-top-left-radius:10px;border-bottom-left-radius:10px}
+.cal-grid .day.in.end{border-top-right-radius:10px;border-bottom-right-radius:10px}
+.cal-grid .day.start,.cal-grid .day.end{background:var(--fg);color:var(--bg)}
+.cal-grid .day.start .dn,.cal-grid .day.end .dn{color:var(--bg)}
+.cal-grid .day.start .cnt,.cal-grid .day.end .cnt{background:var(--bg);color:var(--fg)}
+.cal-grid .day.pending{border-radius:10px}
+.cal-hint{margin:6px 2px 0;font-size:13px;color:var(--muted);line-height:1.6}
+.cal-presets{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.cal-presets button{padding:7px 14px;min-height:36px;border:1px solid var(--faint);border-radius:999px;background:transparent;font-size:13.5px;color:var(--muted)}
+.cal-presets button:hover,.seg button:not([aria-pressed=true]):hover{color:var(--fg);border-color:var(--fg)}
+.cal-results{margin:22px 0 0}
+.cal-results-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.cal-results-head h2{font-size:18px;line-height:1.5;margin:0}
+.cal-results-head h2:focus{outline:none}
+.cal-results-head h2:focus-visible{outline:2px solid var(--accent)}
+.cal-n{margin-left:10px;font-size:14px;color:var(--muted);font-weight:400}
+.cal-clear{font:inherit;font-size:14px;padding:8px 16px;min-height:40px;border-radius:999px;border:1px solid var(--fg);background:var(--fg);color:var(--bg);cursor:pointer}
+.cal-list{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:12px}
+.cal-item a{display:block;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;text-decoration:none;color:inherit;box-shadow:var(--shadow)}
+.cal-item.extra a{border-left:4px solid var(--extra)}
+.cal-item a:hover{border-color:var(--accent)}
+.cal-item a:hover .cal-title{color:var(--accent)}
+.cal-title{display:block;font-size:16px;font-weight:700;line-height:1.55;margin:6px 0 4px}
+.cal-issue{display:block;font-size:13px;color:var(--muted)}
+.cal-list .empty{padding:8px 2px}

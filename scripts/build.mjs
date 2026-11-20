@@ -353,10 +353,49 @@ const cards = issues.map((is, idx) => `<li class="card" data-type="${is.type}">
   </ol>
 </li>`).join('\n');
 const nW = issues.filter((p) => p.type === 'weekly').length, nE = issues.length - nW;
+// ---- calendar data (top page) ----
+// 1記事 = 1件。日付は「この記事が載った号の発行日」(号の frontmatter `date`)。記事自身の `date` はニュースの日付として表示に使う。
+// 将来タグなどで絞り込む場合は、各要素にフィールドを足して assets/calendar.js の filters に条件を追加する。
+const calArticles = issues.flatMap((is) => is.articles.map((a, i) => ({
+  d: is.date, ad: a.date, type: is.type, issue: is.issue, it: is.title, no: i + 1, url: `/posts/${is.issue}/${a.slug}/`, t: a.title,
+})));
+const calJson = JSON.stringify({ articles: calArticles }).replace(/</g, '\\u003c');
+const calendarHtml = `<section class="cal" id="cal" aria-labelledby="cal-h" hidden>
+  <div class="cal-top">
+    <h2 id="cal-h">カレンダーで探す</h2>
+    <div class="seg" role="group" aria-label="選び方">
+      <button type="button" data-mode="day" aria-pressed="true">日付</button><button type="button" data-mode="range" aria-pressed="false">期間</button>
+    </div>
+  </div>
+  <div class="cal-nav">
+    <button type="button" class="cal-step" data-step="-1" aria-label="前の月"><span aria-hidden="true">‹</span></button>
+    <p class="cal-month" id="cal-month" aria-live="polite"></p>
+    <button type="button" class="cal-step" data-step="1" aria-label="次の月"><span aria-hidden="true">›</span></button>
+  </div>
+  <table class="cal-grid" aria-labelledby="cal-month">
+    <thead><tr>${[...'日月火水木金土'].map((w, i) => `<th scope="col"${i === 0 ? ' class="sun"' : i === 6 ? ' class="sat"' : ''}><abbr title="${w}曜日">${w}</abbr></th>`).join('')}</tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="cal-hint" id="cal-hint">日付をタップすると、その日の記事に絞り込みます。</p>
+  <div class="cal-presets" role="group" aria-label="よく使う期間">
+    <button type="button" data-preset="this-week">今週</button><button type="button" data-preset="last-week">先週</button><button type="button" data-preset="this-month">今月</button><button type="button" data-preset="last-month">先月</button>
+  </div>
+</section>
+<section class="cal-results" id="cal-results" aria-labelledby="cal-results-h" hidden>
+  <div class="cal-results-head">
+    <h2 id="cal-results-h" tabindex="-1"></h2>
+    <button type="button" class="cal-clear" data-clear>絞り込みを解除</button>
+  </div>
+  <ul class="cal-list"></ul>
+</section>
+<p class="visually-hidden" id="cal-status" role="status" aria-live="polite"></p>
+<script type="application/json" id="cal-data">${calJson}</script>
+<script src="/calendar.js" defer></script>`;
 const indexBody = `<section class="hero-top">
 <h1>${esc(SITE_TITLE)}</h1>
 <p>${esc(SITE_DESC)}</p>
 </section>
+${calendarHtml}
 <div class="tabs" role="radiogroup" aria-label="号の種類で絞り込み">
   <input type="radio" name="f" id="f-all" checked><label for="f-all">すべて（${issues.length}）</label>
   <input type="radio" name="f" id="f-weekly"${nW ? '' : ' disabled'}><label for="f-weekly">週刊（${nW}）</label>
